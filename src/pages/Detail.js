@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Nav, Tab } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import TabContent from "../components/TabContent";
-import { addItem } from "../redux/store";
+import { addItem, setWatched } from "../redux/store";
 import { useDispatch } from "react-redux";
 
 function Detail({fruit}) {
-  const {id} = useParams(); // 경로상에 있는 내용 가져오기
+  const {id} = useParams(); // 경로상에 있는 내용 가져오기 -> 상품정보 id
   const isFruit = fruit.find((data)=>data.id == id); //find함수 이용해 있는지 확인
   const[num, setNum] = useState(0);
   const[num2, setNum2] = useState(0);
@@ -21,7 +21,6 @@ function Detail({fruit}) {
       console.log(3)
       setAlert(false)
     }, 3000)
-
     // cleaner function
     return()=>{
       console.log(1)
@@ -29,6 +28,19 @@ function Detail({fruit}) {
     }
   },[num2])
 
+  useEffect(()=>{
+    let watched = localStorage.getItem('watched');
+    watched = JSON.parse(watched);
+    if(watched.length === 3 && !watched.includes(id)) // watched.includes -> id가 들어있는지 확인해주는 함수
+      watched.pop();
+    watched=[id,...watched]
+    watched= new Set(watched) // 배열구조를 가진 watch를 set으로 중복제거
+    watched=Array.from(watched) // 위치 정보를 가지지 않아 배열로 다시 변경해야함
+    localStorage.setItem('watched', JSON.stringify(watched))
+
+    dispatch(setWatched(watched)) // state(watched)에 최근본 상품들 id들어감
+  }, [])
+  
   if(!isFruit){
     return(
       <h1>해당상품은 없습니다.</h1>

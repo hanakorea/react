@@ -31,11 +31,23 @@ const cart = createSlice({
   }
 })
 
+const watched = createSlice({
+  name:"watched",
+  initialState:[],
+  reducers:{
+    setWatched(state, action){
+      return action.payload
+    }
+  }
+})
+
+export const {setWatched} = watched.actions
 export const {addCount, addItem, removeItem} = cart.actions
 
 // state 내보내기
 export default configureStore({
   reducer:{
-    cart:cart.reducer
+    cart:cart.reducer,
+    watched:watched.reducer
   }
 })
